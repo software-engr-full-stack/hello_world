@@ -8,3 +8,4 @@ export SECRET_KEY_BASE=skb
 # https://stackoverflow.com/a/63408595
 # rm -rf config/credentials.yml.enc
 # EDITOR="vi --wait" bin/rails credentials:edit
+# apt-get install build-essential autoconf libpq-dev
