@@ -1,0 +1,6 @@
+deploy_user: 'user'
+RAILS_ENV: 'production'
+HELLO_WORLD_DATABASE_HOST: 'server.rds.amazonaws.com'
+HELLO_WORLD_DATABASE_NAME: 'db_name'
+HELLO_WORLD_DATABASE_USER: 'username'
+HELLO_WORLD_DATABASE_PASSWORD: 'password'
