@@ -1,4 +1,8 @@
 ---
+# TODO:
+#   1. systemd setup for rails server
+#   2. Setup for repo update: git pull, rails db:migrate, restart, etc.
+
 - hosts: default
 
   remote_user: '{{ user_with_remote_access }}'
