@@ -70,6 +70,34 @@
       - db:create
       - db:migrate
 
+  - name: '{{ title }}: setup nginx, upload config'
+    become: yes
+    ansible.builtin.copy:
+      src: './nginx.conf'
+      dest: '/etc/nginx/sites-available/hello_world'
+
+  - name: '{{ title }}: setup nginx, make available'
+    become: yes
+    ansible.builtin.file:
+      src: '/etc/nginx/sites-available/hello_world'
+      dest: '/etc/nginx/sites-enabled/hello_world'
+      state: link
+
+  - name: '{{ title }}: setup nginx, remove default'
+    become: yes
+    ansible.builtin.file:
+      dest: '/etc/nginx/sites-enabled/default'
+      state: absent
+
+  # TODO: only restart if config files are changed
+  - name: '{{ title }}: setup nginx, restart'
+    become: yes
+    ansible.builtin.command:
+      argv:
+        - systemctl
+        - restart
+        - nginx.service
+
   - name: '{{ title }}: copy secrets for debugging'
     become: yes
     become_user: '{{ deploy_user }}'
