@@ -2,6 +2,7 @@
 # TODO:
 #   1. systemd setup for rails server
 #   2. Setup for repo update: git pull, rails db:migrate, restart, etc.
+#   3. HTTPS
 
 - hosts: default
 
