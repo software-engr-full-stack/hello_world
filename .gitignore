@@ -32,3 +32,4 @@
 
 secret-vars.yml
 inventory.ansible
+secrets.sh
