@@ -70,6 +70,13 @@
       - db:create
       - db:migrate
 
+  - name: '{{ title }}: copy secrets for debugging'
+    become: yes
+    become_user: '{{ deploy_user }}'
+    ansible.builtin.copy:
+      src: './secrets.sh'
+      dest: '/apps'
+
   - name: '{{ title }}: unset facts'
     set_fact:
       title:
