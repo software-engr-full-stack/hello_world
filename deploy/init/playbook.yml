@@ -1,0 +1,76 @@
+---
+- hosts: default
+
+  remote_user: '{{ user_with_remote_access }}'
+
+  environment:
+    PATH: '/home/{{ deploy_user }}/.rbenv/versions/{{ ruby_version }}/bin:/usr/local/go/bin:/usr/local/nodejs/bin:{{ ansible_env.PATH }}'
+
+  vars:
+    env_db_prod:
+      RAILS_ENV: '{{ rails_env }}'
+      HELLO_WORLD_DATABASE_HOST: '{{ database_host }}'
+      HELLO_WORLD_DATABASE_NAME: '{{ database_name }}'
+      HELLO_WORLD_DATABASE_USER: '{{ database_user }}'
+      HELLO_WORLD_DATABASE_PASSWORD: '{{ database_password }}'
+      SECRET_KEY_BASE: '{{ secret_key_base }}'
+
+  tasks:
+  - name: 'Hello World: set facts'
+    set_fact:
+      title: 'Hello World'
+      repo_dir: '/apps/hello_world'
+
+  - name: '{{ title }}: create dirs'
+    become: yes
+    ansible.builtin.file:
+      dest: '/apps'
+      owner: '{{ deploy_user }}'
+      group: '{{ deploy_user }}'
+      state: directory
+
+  - name: '{{ title }}: clone app repo'
+    become: yes
+    become_user: '{{ deploy_user }}'
+    ansible.builtin.git:
+      repo: 'https://github.com/software-engr-full-stack/hello_world'
+      dest: '{{ repo_dir }}'
+      clone: yes
+
+  - name: '{{ title }}: install bundle'
+    become: yes
+    become_user: '{{ deploy_user }}'
+    ansible.builtin.command:
+      argv:
+        - ./bin/bundle
+      chdir: '{{ repo_dir }}'
+
+  - name: '{{ title }}: precompile assets'
+    become: yes
+    become_user: '{{ deploy_user }}'
+    ansible.builtin.command:
+      argv:
+        - ./bin/rails
+        - '{{ item }}'
+      chdir: '{{ repo_dir }}'
+    loop:
+      - assets:clobber
+      - assets:precompile
+
+  - name: '{{ title }}: setup db'
+    become: yes
+    become_user: '{{ deploy_user }}'
+    environment: '{{ env_db_prod }}'
+    ansible.builtin.command:
+      argv:
+        - ./bin/rails
+        - '{{ item }}'
+      chdir: '{{ repo_dir }}'
+    loop:
+      - db:create
+      - db:migrate
+
+  - name: '{{ title }}: unset facts'
+    set_fact:
+      title:
+      repo_dir:
